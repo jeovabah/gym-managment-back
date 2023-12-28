@@ -23,6 +23,57 @@ export class ActivitiesService {
     });
   }
 
+  async findAllPaymentsByFilter(date?: string) {
+    let queryOptions = {};
+
+    if (date) {
+      const selectedDate = new Date(date);
+      const nextDay = new Date(selectedDate);
+      nextDay.setDate(selectedDate.getDate() + 1);
+
+      queryOptions = {
+        where: {
+          startTime: {
+            gte: selectedDate,
+            lt: nextDay,
+          },
+        },
+      };
+    }
+
+    const activities = await this.prisma.activity.findMany({
+      ...queryOptions,
+      include: {
+        instructor: {
+          select: {
+            name: true,
+            role: true,
+            id: true,
+            payRate: true,
+          },
+        },
+      },
+    });
+
+    const totalPayments = activities.reduce(
+      (total, activity) =>
+        total + activity.instructorPayRate * (activity?.attendees || 0),
+      0,
+    );
+
+    const supostamenteTotalPayments = activities.reduce(
+      (total, activity) =>
+        total + activity.instructorPayRate * (activity?.maxAttendees || 0),
+      0,
+    );
+
+    return {
+      data: activities,
+      totalPayments,
+      supostamenteTotalPayments,
+    };
+  }
+
   async findAllWithStatus(date?: string) {
     let queryOptions = {};
 

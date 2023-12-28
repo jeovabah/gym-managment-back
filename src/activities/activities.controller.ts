@@ -29,6 +29,10 @@ export class ActivitiesController {
   findAllWithStatus(@Query('date') date?: string) {
     return this.activitiesService.findAllWithStatus(date);
   }
+  @Get('/graph-details')
+  findAllPaymentActivity(@Query('date') date?: string) {
+    return this.activitiesService.findAllPaymentsByFilter(date);
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
