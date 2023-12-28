@@ -28,9 +28,15 @@ export declare class ActivitiesController {
         instructorId: string;
         instructorPayRate: number;
     }, unknown, never> & {})[]>;
-    findAllStatus(): Promise<{
+    findAllWithStatus(date?: string): Promise<{
         data: {
             status: any;
+            instructor: {
+                name: string;
+                role: import(".prisma/client").UserRole;
+                id: string;
+                payRate: number;
+            };
             id: string;
             title: string;
             startTime: Date;

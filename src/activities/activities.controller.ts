@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ActivitiesService } from './activities.service';
 import { CreateActivityDto } from './dto/create-activity.dto';
@@ -25,8 +26,8 @@ export class ActivitiesController {
     return this.activitiesService.findAll();
   }
   @Get('/status')
-  findAllStatus() {
-    return this.activitiesService.findAllWithStatus();
+  findAllWithStatus(@Query('date') date?: string) {
+    return this.activitiesService.findAllWithStatus(date);
   }
 
   @Get(':id')

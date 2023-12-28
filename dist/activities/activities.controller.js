@@ -27,8 +27,8 @@ let ActivitiesController = class ActivitiesController {
     findAll() {
         return this.activitiesService.findAll();
     }
-    findAllStatus() {
-        return this.activitiesService.findAllWithStatus();
+    findAllWithStatus(date) {
+        return this.activitiesService.findAllWithStatus(date);
     }
     findOne(id) {
         return this.activitiesService.findOne(id);
@@ -55,10 +55,11 @@ __decorate([
 ], ActivitiesController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('/status'),
+    __param(0, (0, common_1.Query)('date')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
-], ActivitiesController.prototype, "findAllStatus", null);
+], ActivitiesController.prototype, "findAllWithStatus", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),

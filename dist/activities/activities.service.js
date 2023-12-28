@@ -31,8 +31,31 @@ let ActivitiesService = class ActivitiesService {
             },
         });
     }
-    async findAllWithStatus() {
-        const activities = await this.prisma.activity.findMany();
+    async findAllWithStatus(date) {
+        let queryOptions = {};
+        if (date) {
+            const selectedDate = new Date(date);
+            const nextDay = new Date(selectedDate);
+            nextDay.setDate(selectedDate.getDate() + 1);
+            queryOptions = {
+                where: {
+                    startTime: {
+                        gte: selectedDate,
+                        lt: nextDay,
+                    },
+                },
+            };
+        }
+        const activities = await this.prisma.activity.findMany(Object.assign(Object.assign({}, queryOptions), { include: {
+                instructor: {
+                    select: {
+                        name: true,
+                        role: true,
+                        id: true,
+                        payRate: true,
+                    },
+                },
+            } }));
         const now = new Date();
         const activitiesWithStatus = activities.map((activity) => {
             let status;
