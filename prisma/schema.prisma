@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+model User {
+  id        String   @id @default(cuid()) @map("_id")
+  email     String   @unique
+  name      String?
+  password  String
+  role      UserRole
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // Relações
+  activities     Activity[]
+  enrollments    ActivityEnrollment[]
+  payments       Payment[]
+  payRate Float? // Taxa de pagamento do instrutor (null para não instrutores)
+}
+
+enum UserRole {
+  ADMIN
+  INSTRUCTOR
+  STUDENT
+}
+
+model Activity {
+  id            String              @id @default(cuid()) @map("_id")
+  title         String
+  startTime     DateTime
+  endTime       DateTime
+  attendees     Int
+  maxAttendees  Int
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  // Relações
+  instructorId  String
+  instructor    User                @relation(fields: [instructorId], references: [id])
+  enrollments   ActivityEnrollment[]
+  instructorPayRate Float // Pagamento por aula ou por hora
+}
+
+model ActivityEnrollment {
+  id            String              @id @default(cuid()) @map("_id")
+  enrolledAt DateTime @default(now())
+  // Relações
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  activityId String
+  activity   Activity @relation(fields: [activityId], references: [id])
+}
+
+model Payment {
+  id            String              @id @default(cuid()) @map("_id")
+  amount    Float
+  dueDate   DateTime
+  paid      Boolean  @default(false)
+  paidAt    DateTime?
+  createdAt DateTime @default(now())
+  // Relações
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
